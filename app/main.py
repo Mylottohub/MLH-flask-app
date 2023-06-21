@@ -1,5 +1,4 @@
 from flask import Flask, g, request, jsonify, make_response
-from flask_httpauth import HTTPBasicAuth
 import sqlite3, os
 
 # for the automated ML cronjob
@@ -10,7 +9,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 app = Flask(__name__)
-auth = HTTPBasicAuth()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -235,7 +233,6 @@ logging.getLogger('apscheduler').setLevel(logging.DEBUG)
                 
 # main app
 @app.route('/api/results', methods=['GET'])
-@auth.login_required
 def get_results():
     if not request.json or not 'GAME' in request.json:
         return bad_request(400)
@@ -251,13 +248,6 @@ def get_results():
     return jsonify(result), 201
 
 
-# authentication
-@auth.get_password
-def get_password(username):
-    if username == 'scitylana':
-        return 'mixjuice33'
-    return None 
-
 
 # defining the error-handler functions
 @app.errorhandler(404)
@@ -267,7 +257,3 @@ def not_found(error):
 @app.errorhandler(400)
 def bad_request(error):
     return make_response(jsonify({'error': 'Bad request, not JSON'}), 400)
-
-@auth.error_handler
-def unauthorized():
-    return make_response(jsonify({'error': 'Unauthorized access'}), 403)
