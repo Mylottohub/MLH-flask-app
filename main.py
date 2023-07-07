@@ -224,7 +224,7 @@ def close_connection(exception):
 
 
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(init_db, 'interval', days=14)
+scheduler.add_job(init_db, 'interval', days=7)
 scheduler.start()
 
 logging.basicConfig()
